@@ -21,19 +21,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 RELAY_BOT_TOKEN = os.getenv("RELAY_BOT_TOKEN", "")
-GROUP_CHAT_ID   = int(os.getenv("RELAY_GROUP_ID", "0"))  # ID du groupe (négatif ex: -1001234567890)
+GROUP_CHAT_ID   = int(os.getenv("RELAY_GROUP_ID", "0"))
 
 # Stocke la correspondance : message_id dans le groupe → user_id
-# (en mémoire, se remet à zéro au redémarrage)
 msg_map: dict = {}
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "👋 Bienvenue sur le support *Alpha Convert* !\n\n"
+        "👋 Bienvenue sur le support Alpha Convert !\n\n"
         "Envoie-moi ton message et notre équipe te répondra rapidement.\n\n"
-        "_Ton identité reste anonyme._",
-        parse_mode="Markdown",
+        "Ton identité reste anonyme.",
     )
 
 
@@ -46,39 +44,36 @@ async def forward_to_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.id == GROUP_CHAT_ID:
         return
 
+    # Pas de Markdown pour éviter les erreurs de parsing avec les caractères spéciaux
     header = (
-        f"👤 *Utilisateur :* {user.first_name}"
+        f"👤 Utilisateur : {user.first_name}"
         + (f" (@{user.username})" if user.username else "")
-        + f"\n🆔 ID : `{user.id}`\n\n"
+        + f"\n🆔 ID : {user.id}\n\n"
     )
 
     try:
         if message.text:
             sent = await context.bot.send_message(
-                chat_id    = GROUP_CHAT_ID,
-                text       = header + message.text,
-                parse_mode = "Markdown",
+                chat_id = GROUP_CHAT_ID,
+                text    = header + message.text,
             )
         elif message.photo:
             sent = await context.bot.send_photo(
-                chat_id   = GROUP_CHAT_ID,
-                photo     = message.photo[-1].file_id,
-                caption   = header + (message.caption or ""),
-                parse_mode= "Markdown",
+                chat_id = GROUP_CHAT_ID,
+                photo   = message.photo[-1].file_id,
+                caption = header + (message.caption or ""),
             )
         elif message.video:
             sent = await context.bot.send_video(
-                chat_id   = GROUP_CHAT_ID,
-                video     = message.video.file_id,
-                caption   = header + (message.caption or ""),
-                parse_mode= "Markdown",
+                chat_id = GROUP_CHAT_ID,
+                video   = message.video.file_id,
+                caption = header + (message.caption or ""),
             )
         elif message.document:
             sent = await context.bot.send_document(
-                chat_id   = GROUP_CHAT_ID,
-                document  = message.document.file_id,
-                caption   = header + (message.caption or ""),
-                parse_mode= "Markdown",
+                chat_id  = GROUP_CHAT_ID,
+                document = message.document.file_id,
+                caption  = header + (message.caption or ""),
             )
         else:
             await message.reply_text("⚠️ Type de message non supporté. Envoie du texte ou une image.")
@@ -116,16 +111,14 @@ async def reply_to_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         if message.text:
             await context.bot.send_message(
-                chat_id    = user_id,
-                text       = f"💬 *Réponse du support :*\n\n{message.text}",
-                parse_mode = "Markdown",
+                chat_id = user_id,
+                text    = f"💬 Réponse du support :\n\n{message.text}",
             )
         elif message.photo:
             await context.bot.send_photo(
-                chat_id  = user_id,
-                photo    = message.photo[-1].file_id,
-                caption  = f"💬 *Réponse du support :*\n\n{message.caption or ''}",
-                parse_mode="Markdown",
+                chat_id = user_id,
+                photo   = message.photo[-1].file_id,
+                caption = f"💬 Réponse du support :\n\n{message.caption or ''}",
             )
         else:
             await context.bot.send_message(
