@@ -1,5 +1,5 @@
 """
-relay_bot.py — Bot relais anonyme
+main.py — Bot relais anonyme
 Les messages envoyés en DM au bot sont transférés dans un groupe.
 Les réponses dans le groupe (en reply) sont renvoyées à l'utilisateur.
 """
@@ -25,7 +25,7 @@ GROUP_CHAT_ID   = int(os.getenv("RELAY_GROUP_ID", "0"))  # ID du groupe (négati
 
 # Stocke la correspondance : message_id dans le groupe → user_id
 # (en mémoire, se remet à zéro au redémarrage)
-msg_map: dict[int, int] = {}
+msg_map: dict = {}
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
