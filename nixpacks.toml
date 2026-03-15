@@ -2,4 +2,4 @@
 nixPkgs = ["python311"]
 
 [start]
-cmd = "python relay_bot.py"
+cmd = "python main.py"
